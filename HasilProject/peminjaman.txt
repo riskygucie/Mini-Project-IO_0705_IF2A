@@ -1,3 +1,0 @@
-Rangga,M001,Pemrograman Java,9
-Pak Andi,D001,Sistem Basis Data,buku sedang kosong
-Budi,K001,Kalkulus,1

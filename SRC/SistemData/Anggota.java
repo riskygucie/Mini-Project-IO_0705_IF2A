@@ -1,37 +1,45 @@
-// Package File: SRC/SistemData/Anggota.java
 package SRC.SistemData;
 
-//Class induk (abstract)
 public abstract class Anggota {
-    
-    // Menyimpan nama anggota
-    protected String nama;
-    // Menyimpan ID anggota
-    protected String id;
 
-    // Constructor
-    public Anggota(String nama, String id) {
+    protected String nama;
+    protected String idAnggota;
+    protected String infoTambahan;
+
+    public Anggota(String idAnggota, String nama, String infoTambahan) {
+        this.idAnggota = idAnggota;
         this.nama = nama;
-        this.id = id;
+        this.infoTambahan = infoTambahan;
     }
 
-    // Mengambil nama anggota
     public String getNama() {
         return nama;
     }
 
-    // Mengambil ID anggota
     public String getId() {
-        return id;
+        return idAnggota;
     }
 
-    // Method abstrak
+    public String getIdAnggota() {
+        return idAnggota;
+    }
+
+    public String getInfoTambahan() {
+        return infoTambahan;
+    }
+
+    public void tampilkanInfo() {
+        System.out.println(this);
+    }
+
     public abstract String getKodeJenis();
 
-    // Overide
+    public String toFileString() {
+        return getKodeJenis() + ";" + idAnggota + ";" + nama + ";" + infoTambahan;
+    }
+
     @Override
-    // Mengembalikan representasi string dari objek Anggota
     public String toString() {
-        return "Nama : " + nama + "\nID   : " + id;
+        return "Nama : " + nama + "\nID   : " + idAnggota;
     }
 }

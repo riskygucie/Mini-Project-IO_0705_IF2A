@@ -1,85 +1,155 @@
-// Package File: SRC/SistemMain/main.java
 package SRC.SistemMain;
 
-// Import Library dan Class
-import SRC.SistemIO.BukuFileIO;
-import SRC.SistemIO.AnggotaFileIO;
-import SRC.SistemIO.PeminjamanFileIO;
 import SRC.SistemData.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
 
-// Class Main
 public class Main {
 
-        // Method Utama
         public static void main(String[] args) {
+                Scanner scanner = new Scanner(System.in);
+                Perpustakaan perpustakaan = new Perpustakaan();
 
-                // ArrayList daftarAnggota
-                List<Anggota> daftarAnggota = new ArrayList<>();
+                boolean berjalan = true;
 
-                //Data Anggota
-                daftarAnggota.add(new Mahasiswa("Rangga", "M001"));
-                daftarAnggota.add(new Dosen("Pak Andi", "D001"));
-                daftarAnggota.add(new Karyawan("Budi", "K001"));
+                while (berjalan) {
+                        tampilkanMenu();
+                        int pilihan;
 
-                // Simpan Data Anggota ke Anggota.txt
-                AnggotaFileIO.simpanAnggota(daftarAnggota, "HasilProject/anggota.txt");
+                        try {
+                                pilihan = Integer.parseInt(scanner.nextLine().trim());
+                        } catch (NumberFormatException e) {
+                                System.out.println("Input tidak valid, masukkan angka menu yang benar.\n");
+                                continue;
+                        }
 
-                // ArrayList Hasil Anggota
-                List<Anggota> hasil = AnggotaFileIO.bacaAnggota("HasilProject/anggota.txt");
-                
-                // Print Header
-                System.out.println("-----------------------------------------------------");
-                System.out.println("DATA ANGGOTA");
-                System.out.println();
-
-                // looping
-                for (Anggota a : hasil) {
-                        System.out.println(a);
+                        switch (pilihan) {
+                                case 1:
+                                        tambahBuku(scanner, perpustakaan);
+                                        break;
+                                case 2:
+                                        tambahAnggota(scanner, perpustakaan);
+                                        break;
+                                case 3:
+                                        pinjamBuku(scanner, perpustakaan);
+                                        break;
+                                case 4:
+                                        kembalikanBuku(scanner, perpustakaan);
+                                        break;
+                                case 5:
+                                        perpustakaan.tampilkanSemuaBuku();
+                                        break;
+                                case 6:
+                                        perpustakaan.tampilkanSemuaAnggota();
+                                        break;
+                                case 7:
+                                        perpustakaan.simpanDataKeFile();
+                                        break;
+                                case 8:
+                                        perpustakaan.muatDataDariFile();
+                                        break;
+                                case 0:
+                                        berjalan = false;
+                                        System.out.println("Terima kasih, sampai jumpa!");
+                                        break;
+                                default:
+                                        System.out.println("Menu tidak dikenali, coba lagi.");
+                        }
                         System.out.println();
                 }
-                System.out.println("-----------------------------------------------------");
 
-                // ArrayList daftarBuku
-                List<Buku> daftarBuku = new ArrayList<>();
+                scanner.close();
+        }
 
-                // Data Buku
-                daftarBuku.add(new Buku("Pemrograman Java", 10));
-                daftarBuku.add(new Buku("Sistem Basis Data", 0));
-                daftarBuku.add(new Buku("Kalkulus", 2));
+        private static void tampilkanMenu() {
+                System.out.println("=== SISTEM PERPUSTAKAAN STEIN ===");
+                System.out.println("1. Tambah Buku");
+                System.out.println("2. Tambah Anggota");
+                System.out.println("3. Pinjam Buku (maks 7 hari)");
+                System.out.println("4. Kembalikan Buku (hitung denda)");
+                System.out.println("5. Tampilkan Semua Buku");
+                System.out.println("6. Tampilkan Semua Anggota");
+                System.out.println("7. Simpan Data ke File");
+                System.out.println("8. Muat Data dari File");
+                System.out.println("0. Keluar");
+                System.out.print("Pilih menu: ");
+        }
 
-                // Simpan Data Buku ke Buku.txt
-                BukuFileIO.simpanKeFile(daftarBuku,"HasilProject/buku.txt");
+        private static void tambahBuku(Scanner scanner, Perpustakaan perpustakaan) {
+                System.out.print("Kode buku: ");
+                String kode = scanner.nextLine().trim();
+                System.out.print("Judul buku: ");
+                String judul = scanner.nextLine().trim();
+                System.out.print("Penulis: ");
+                String penulis = scanner.nextLine().trim();
+                System.out.print("Stok: ");
 
-                // ArrayList hasilBuku
-                List<Buku> hasilBuku = BukuFileIO.bacaDariFile("HasilProject/buku.txt");
-               
-                // Print Header
-                System.out.println("-----------------------------------------------------");
-                System.out.println("DATA BUKU");
-                System.out.println();
-
-                // Looping
-                for (Buku b : hasilBuku) {
-                        System.out.println(b);
-                        System.out.println();
+                int stok;
+                try {
+                        stok = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                        System.out.println("Stok harus angka, buku disimpan dengan stok 0.");
+                        stok = 0;
                 }
-                System.out.println("-----------------------------------------------------");
-                // ArrayList daftarPeminjaman
-                List<Peminjaman> daftarPeminjaman = new ArrayList<>();
-                
-                // Data Peminjaman
-                daftarPeminjaman.add(new Peminjaman(hasil.get(0), hasilBuku.get(0)));
-                daftarPeminjaman.add(new Peminjaman(hasil.get(1), hasilBuku.get(1)));
-                daftarPeminjaman.add(new Peminjaman(hasil.get(2), hasilBuku.get(2)));
-                
-                // Simpan peminjaman ke Peminjaman.txt
-                PeminjamanFileIO.simpanPeminjaman(daftarPeminjaman, "HasilProject/peminjaman.txt");
-                
-                // Baca peminjaman dari Peminjaman.txt dan tampilkan datanya
-                PeminjamanFileIO.bacaPeminjaman("HasilProject/peminjaman.txt");
-                AnggotaFileIO.simpanAnggota(daftarAnggota,"HasilProject/anggota.txt");
-                BukuFileIO.simpanKeFile(daftarBuku,"HasilProject/buku.txt");
+                perpustakaan.tambahBuku(new Buku(kode, judul, penulis, stok));
+        }
+
+        private static void tambahAnggota(Scanner scanner, Perpustakaan perpustakaan) {
+                System.out.print("Tipe anggota (1=Mahasiswa, 2=Dosen, 3= karyawan): ");
+                String tipe = scanner.nextLine().trim();
+
+                System.out.print("ID anggota: ");
+                String id = scanner.nextLine().trim();
+                System.out.print("Nama: ");
+                String nama = scanner.nextLine().trim();
+
+                if (tipe.equals("1")) {
+                        System.out.print("NPM: ");
+                        String npm = scanner.nextLine().trim();
+                        perpustakaan.tambahAnggota(new Mahasiswa(id, nama, npm));
+                } else if (tipe.equals("2")) {
+                        System.out.print("NIP: ");
+                        String nip = scanner.nextLine().trim();
+                        perpustakaan.tambahAnggota(new Dosen(id, nama, nip));
+                } else if (tipe.equals("3")) {
+                        System.out.print("NP: ");
+                        String np = scanner.nextLine().trim();
+                        perpustakaan.tambahAnggota(new Karyawan(id, nama, np));
+                } else {
+                        System.out.println("Tipe tidak dikenali, anggota tidak ditambahkan.");
+                }
+        }
+
+        private static void pinjamBuku(Scanner scanner, Perpustakaan perpustakaan) {
+                System.out.print("Kode buku yang dipinjam: ");
+                String kodeBuku = scanner.nextLine().trim();
+                System.out.print("ID anggota peminjam: ");
+                String idAnggota = scanner.nextLine().trim();
+
+                int lamaHari = 0;
+                boolean inputValid = false;
+
+                while (!inputValid) {
+                        try {
+                                System.out.print("Lama peminjaman (1-7 hari): ");
+                                String input = scanner.nextLine().trim();
+                                lamaHari = Integer.parseInt(input);
+
+                                if (lamaHari >= 1 && lamaHari <= 7) {
+                                        inputValid = true;
+                                } else {
+                                        System.out.println("Durasi peminjaman harus antara 1 sampai 7 hari.");
+                                }
+                        } catch (NumberFormatException e) {
+                                System.out.println("Input harus berupa angka.");
+                        }
+                }
+
+                perpustakaan.pinjamBuku(kodeBuku, idAnggota, lamaHari);
+        }
+
+        private static void kembalikanBuku(Scanner scanner, Perpustakaan perpustakaan) {
+                System.out.print("ID transaksi yang dikembalikan: ");
+                String idTransaksi = scanner.nextLine().trim();
+                perpustakaan.kembalikanBuku(idTransaksi);
         }
 }

@@ -1,3 +1,0 @@
-Pemrograman Java;10
-Sistem Basis Data;0
-Kalkulus;2

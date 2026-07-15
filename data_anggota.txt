@@ -1,0 +1,2 @@
+DOSEN;1234;gucie;705
+KARYAWAN;4321;tirta;608
