@@ -46,6 +46,10 @@ public class Buku {
         return false;
     }
 
+    public void tambahStok() {
+        stok++;
+    }
+
     public String toFileString() {
         return kodeBuku + ";" + judul + ";" + penulis + ";" + stok;
     }

@@ -1,6 +1,7 @@
 package SRC.SistemData;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class Perpustakaan {
     private final List<Anggota> daftarAnggota;
     private final List<Peminjaman> daftarTransaksi;
 
+    private static final String DATA_DIR = "data";
     private static final String FILE_BUKU = "data_buku.txt";
     private static final String FILE_ANGGOTA = "data_anggota.txt";
 
@@ -21,6 +23,18 @@ public class Perpustakaan {
         this.koleksiBuku = new ArrayList<>();
         this.daftarAnggota = new ArrayList<>();
         this.daftarTransaksi = new ArrayList<>();
+    }
+
+    private File getDataDirectory() {
+        File dir = new File(DATA_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+    private File getDataFile(String namaFile) {
+        return new File(getDataDirectory(), namaFile);
     }
 
     public void tambahBuku(Buku buku) {
@@ -121,7 +135,9 @@ public class Perpustakaan {
         for (Peminjaman t : daftarTransaksi) {
             if (t.getIdTransaksi().equalsIgnoreCase(idTransaksi) && !t.isSudahKembali()) {
                 double denda = t.kembalikanBuku();
+                t.getBuku().tambahStok();
                 System.out.println("Buku \"" + t.getBuku().getJudul() + "\" berhasil dikembalikan.");
+                System.out.println("Stok buku sekarang: " + t.getBuku().getStok());
                 if (denda > 0) {
                     System.out.println("Terlambat! Denda yang harus dibayar: Rp" + (int) denda);
                 } else {
@@ -145,7 +161,8 @@ public class Perpustakaan {
     }
 
     public void simpanDataKeFile() {
-        try (BufferedWriter writerBuku = new BufferedWriter(new FileWriter(FILE_BUKU))) {
+        File fileBuku = getDataFile(FILE_BUKU);
+        try (BufferedWriter writerBuku = new BufferedWriter(new FileWriter(fileBuku))) {
             for (Buku b : koleksiBuku) {
                 writerBuku.write(b.toFileString());
                 writerBuku.newLine();
@@ -155,7 +172,8 @@ public class Perpustakaan {
             return;
         }
 
-        try (BufferedWriter writerAnggota = new BufferedWriter(new FileWriter(FILE_ANGGOTA))) {
+        File fileAnggota = getDataFile(FILE_ANGGOTA);
+        try (BufferedWriter writerAnggota = new BufferedWriter(new FileWriter(fileAnggota))) {
             for (Anggota a : daftarAnggota) {
                 writerAnggota.write(a.toFileString());
                 writerAnggota.newLine();
@@ -165,11 +183,12 @@ public class Perpustakaan {
             return;
         }
 
-        System.out.println("Semua data berhasil disimpan ke " + FILE_BUKU + " dan " + FILE_ANGGOTA);
+        System.out.println("Semua data berhasil disimpan ke " + fileBuku.getPath() + " dan " + fileAnggota.getPath());
     }
 
     public void muatDataDariFile() {
-        try (BufferedReader readerBuku = new BufferedReader(new FileReader(FILE_BUKU))) {
+        File fileBuku = getDataFile(FILE_BUKU);
+        try (BufferedReader readerBuku = new BufferedReader(new FileReader(fileBuku))) {
             koleksiBuku.clear();
             String baris;
             while ((baris = readerBuku.readLine()) != null) {
@@ -183,10 +202,11 @@ public class Perpustakaan {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Belum ada file data buku tersimpan (" + FILE_BUKU + ").");
+            System.out.println("Belum ada file data buku tersimpan (" + fileBuku.getPath() + ").");
         }
 
-        try (BufferedReader readerAnggota = new BufferedReader(new FileReader(FILE_ANGGOTA))) {
+        File fileAnggota = getDataFile(FILE_ANGGOTA);
+        try (BufferedReader readerAnggota = new BufferedReader(new FileReader(fileAnggota))) {
             daftarAnggota.clear();
             String baris;
             while ((baris = readerAnggota.readLine()) != null) {
@@ -211,7 +231,7 @@ public class Perpustakaan {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Belum ada file data anggota tersimpan (" + FILE_ANGGOTA + ").");
+            System.out.println("Belum ada file data anggota tersimpan (" + fileAnggota.getPath() + ").");
         }
 
         System.out.println("Proses memuat data selesai.");
